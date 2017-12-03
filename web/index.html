@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="windows-1252">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+			  crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <div>TODO write content</div>
+        <input type="text" id="idTrain"/>
+        <input type="button" id="idSubmit" value="Chercher"/>
+        <table id="trains">
+            <tr>
+                <th>
+                    Numéro de train
+                </th>
+                <th>
+                    Ville de départ
+                </th>
+                <th>
+                    Ville d'arrivée
+                </th>
+                <th>
+                    Heure de départ
+                </th>
+            </tr>
+        </table>
+        <script type="text/javascript">
+            $(document).ready(function(){
+                var request = new XMLHttpRequest();
+                request.open("GET", "http://localhost:8080/WebRESTtrain/webresources/trains", false);
+                request.send();
+                var xml = request.responseXML;
+                var trains = xml.getElementsByTagName("train");
+                for(var i = 0; i < trains.length; i++) {
+                    
+                    var train = trains[i];
+                    var tr ="<tr>";
+                    tr += "<td>" +train.getElementsByTagName("numTrain")[0].textContent+"</td>";
+                    tr += "<td>" +train.getElementsByTagName("villeDepart")[0].textContent+"</td>";
+                    tr += "<td>" +train.getElementsByTagName("villeArrivee")[0].textContent+"</td>";
+                    tr += "<td>" +train.getElementsByTagName("heureDepart")[0].textContent.substring(0,2)
+                    tr += " : "
+                    tr += train.getElementsByTagName("heureDepart")[0].textContent.substring(2)+"</td>";
+                    tr +="<td><button title='Réserver le train "+train.getElementsByTagName("numTrain")[0].textContent
+                            +"' id='" +train.getElementsByTagName("numTrain")[0].textContent
+                            +"'>Réserver</button></td>"
+                    tr += "</tr>";
+                    $("#trains").append(tr);
+                }
+            });
+        </script>
+    </body>
+</html>
