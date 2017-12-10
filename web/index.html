@@ -13,7 +13,7 @@ and open the template in the editor.
 			  crossorigin="anonymous"></script>
     </head>
     <body>
-        <a href="BookTrain.html" style="float:right">Vos réservations</a>
+        <a href="BookTrains.html" style="float:right">Vos réservations</a>
         <input type="text" id="idTrain" placeholder="Numéro de train (ex : TR123)" style="width:180px;"/>
         <input type="button" id="idSubmit" value="Chercher"/>
         <table id="trains">
@@ -41,7 +41,6 @@ and open the template in the editor.
                 request.open("GET", "http://localhost:8080/WebRESTtrain/webresources/trains", false);
                 request.send();
                 var xml = request.responseXML;
-                console.log(xml);
                 var trains = xml.getElementsByTagName("train");
                 for(var i = 0; i < trains.length; i++) {
                     var train = trains[i];
