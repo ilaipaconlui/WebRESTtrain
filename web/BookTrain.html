@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>BookTrains</title>
+        <meta charset="windows-1252">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+			  crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <input type="text" id="idTrain"/>
+        <input type="button" id="idSubmit" value="Chercher"/>
+        <table id="trains">
+            <tr>
+                <th>
+                    Numéro de réservation
+                </th>
+                <th>
+                    Nombre de place
+                </th>
+                <th>
+                    Numéro de train
+                </th>
+                <th>
+                    Ville de départ
+                </th>
+                <th>
+                    Ville d'arrivée
+                </th>
+                <th>
+                    Heure de départ
+                </th>
+            </tr>
+        </table>
+        <script type="text/javascript">
+            $(document).ready(function(){
+                var request = new XMLHttpRequest();
+                request.open("GET", "http://localhost:8080/WebRESTtrain/webresources/trains/booktrains", false);
+                request.send();
+                var xml = request.responseXML;
+                var booktrains = xml.getElementsByTagName("booktrain");
+                for(var i = 0; i < booktrains.length; i++) {
+                    
+                    var booktrain = booktrains[i];
+                    var train = booktrain.getElementsByTagName("currentTrain")[0];
+                    var tr ="<tr>";
+                    tr += "<td>" +booktrain.getElementsByTagName("bookNumber")[0].textContent+"</td>";
+                    tr += "<td>" +booktrain.getElementsByTagName("numberPlaces")[0].textContent+"</td>";
+                    tr += "<td>" +train.getElementsByTagName("numTrain")[0].textContent+"</td>";
+                    tr += "<td>" +train.getElementsByTagName("villeDepart")[0].textContent+"</td>";
+                    tr += "<td>" +train.getElementsByTagName("villeArrivee")[0].textContent+"</td>";
+                    tr += "<td>" +train.getElementsByTagName("heureDepart")[0].textContent.substring(0,2)
+                    tr += " : "
+                    tr += train.getElementsByTagName("heureDepart")[0].textContent.substring(2)+"</td>";
+                    tr +="<td><button title='Annuler la réservation "+booktrain.getElementsByTagName("bookNumber")[0].textContent
+                            +"' id='" +booktrain.getElementsByTagName("bookNumber")[0].textContent
+                            +"'>Annuler</button></td>"
+                    tr += "</tr>";
+                    $("#trains").append(tr);
+                }
+                $("button").click(function(){
+                var numReservation = $(this).attr("id"); 
+                var request = new XMLHttpRequest();
+                request.onreadystatechange = function() {
+                     if (this.readyState == 4 && this.status == 202) {
+                       if(!alert("Votre réservation numéro " + numReservation + "a bien été annulée.")){
+                           location.reload();
+                       }
+                     }
+                };
+                request.open("DELETE", "http://localhost:8080/WebRESTtrain/webresources/trains/booktrains/"+numReservation, true);
+                request.send(null);
+                });
+            });
+            
+        </script>
+    </body>
+</html>
