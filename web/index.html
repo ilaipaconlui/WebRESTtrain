@@ -53,13 +53,13 @@ and open the template in the editor.
                     tr += " : ";
                     tr += train.getElementsByTagName("heureDepart")[0].textContent.substring(2)+"</td>";
                     tr += "<td><input type='number' name='nbPlaces' id='nbPlaces"+train.getElementsByTagName("numTrain")[0].textContent+"'></td>";
-                    tr +="<td><button title='Réserver le train "+train.getElementsByTagName("numTrain")[0].textContent
+                    tr +="<td><button class='bookTrain' title='Réserver le train "+train.getElementsByTagName("numTrain")[0].textContent
                             +"' id='" +train.getElementsByTagName("numTrain")[0].textContent
                             +"'>Réserver</button></td>";
                     tr += "</tr>";
                     $("#trains").append(tr);
                 }
-                $("button").click(function(){
+                $("button.bookTrain").click(function(){
                     var numTrain = $(this).attr("id");
                     var nbPlaces = $('input[id=nbPlaces'+numTrain+']').val();
                     var request = new XMLHttpRequest();
