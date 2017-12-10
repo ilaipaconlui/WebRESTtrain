@@ -6,14 +6,14 @@ and open the template in the editor.
 -->
 <html>
     <head>
-        <title>TODO supply a title</title>
+        <title>Trains</title>
         <meta charset="windows-1252">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
 			  crossorigin="anonymous"></script>
     </head>
     <body>
-        <div>TODO write content</div>
+        <a href="BookTrain.html" target="_blank" style="float:right">Vos réservations</a>
         <input type="text" id="idTrain"/>
         <input type="button" id="idSubmit" value="Chercher"/>
         <table id="trains">
@@ -29,6 +29,9 @@ and open the template in the editor.
                 </th>
                 <th>
                     Heure de départ
+                </th>
+                <th>
+                    Nombre de places
                 </th>
             </tr>
         </table>
@@ -49,13 +52,31 @@ and open the template in the editor.
                     tr += "<td>" +train.getElementsByTagName("heureDepart")[0].textContent.substring(0,2)
                     tr += " : "
                     tr += train.getElementsByTagName("heureDepart")[0].textContent.substring(2)+"</td>";
+                    tr += "<td><input type='number' name='nbPlaces' id='nbPlaces"+train.getElementsByTagName("numTrain")[0].textContent+"'></td>"
                     tr +="<td><button title='Réserver le train "+train.getElementsByTagName("numTrain")[0].textContent
                             +"' id='" +train.getElementsByTagName("numTrain")[0].textContent
                             +"'>Réserver</button></td>"
                     tr += "</tr>";
                     $("#trains").append(tr);
                 }
+                $("button").click(function(){
+                var numTrain = $(this).attr("id");
+                var nbPlaces = $('input[id=nbPlaces'+numTrain+']').val();
+                var request = new XMLHttpRequest();
+                request.onreadystatechange = function() {
+                     if (this.readyState == 4 && this.status == 200) {
+                       alert("Votre réservation du train "+numTrain+" pour "+nbPlaces+" personnes, a bien été prise en compte. \n"
+                       +"Votre numéro de réservation est le suivant "+this.responseText);
+                     }
+                };
+                request.open("POST", "http://localhost:8080/WebRESTtrain/webresources/trains/booktrains", true);
+                request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                var data = "num="+numTrain+"&nb="+nbPlaces;
+                request.setRequestHeader("Content-length", data.length);
+                request.send(data);
+                });
             });
+            
         </script>
     </body>
 </html>

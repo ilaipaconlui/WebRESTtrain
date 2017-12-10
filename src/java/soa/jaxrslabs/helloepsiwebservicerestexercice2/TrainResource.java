@@ -16,7 +16,13 @@ public class TrainResource {
 
     public TrainResource() {
     }
+    
+    @Path("/booktrains") // Chemin suivant /trains/booktrains pour invoquer cette méthode
+    public BookTrainResource getBookTrainResource() {
+        return new BookTrainResource();
+    }
 
+   
     @GET // Méthode HTTP utilisée pour déclencher cette méthode
     public Response getTrains() {
         System.out.println("getTrains");

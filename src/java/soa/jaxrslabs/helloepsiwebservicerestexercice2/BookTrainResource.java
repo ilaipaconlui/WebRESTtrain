@@ -2,10 +2,15 @@ package soa.jaxrslabs.helloepsiwebservicerestexercice2;
 
 import java.util.List;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -13,16 +18,11 @@ import javax.ws.rs.core.Response.Status;
  *
  * @author M34LMAR
  */
+@Produces("application/xml")
 public class BookTrainResource {
 
-    @Path("/booktrains"
-            + ".") // Chemin suivant /trains/booktrains pour invoquer cette méthode
-    public BookTrainResource getBookTrainResource() {
-        return new BookTrainResource();
-    }
-
     @POST // Méthode HTTP utilisée pour déclencher cette méthode
-    public Response createBookTrain(String numTrain, int numberPlaces) {
+    public Response createBookTrain(@FormParam("num") String numTrain,@FormParam("nb") int numberPlaces) {
         Train currentTrain = null;
         for (Train current : BookTrainBD.getTrains()) {
             if (current.getNumTrain().equals(numTrain)) {
@@ -50,7 +50,7 @@ public class BookTrainResource {
         System.out.println("getBookTrains");
         return Response
                 .status(Status.OK)
-                .entity(BookTrainBD.getBookTrains())
+                .entity(new GenericEntity<List<BookTrain>>(BookTrainBD.getBookTrains()){})
                 .build();
     }
 
@@ -80,6 +80,7 @@ public class BookTrainResource {
                 currentBookTrain = current;
             }
         }
+        BookTrainBD.getBookTrains().remove(currentBookTrain);
         return Response.status(Status.ACCEPTED).build();
     }
 }
