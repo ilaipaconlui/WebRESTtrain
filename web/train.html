@@ -6,16 +6,15 @@ and open the template in the editor.
 -->
 <html>
     <head>
-        <title>Trains</title>
+        <title>Train</title>
         <meta charset="windows-1252">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
 			  crossorigin="anonymous"></script>
     </head>
     <body>
-        <a href="BookTrain.html" style="float:right">Vos réservations</a>
-        <input type="text" id="idTrain" placeholder="Numéro de train (ex : TR123)" style="width:180px;"/>
-        <input type="button" id="idSubmit" value="Chercher"/>
+        <a href="index.html" style="float:right">Retour à l'accueil</a>
+        <a href="BookTrain.html" style="float:right; padding-right:5px;">Vos réservations</a>
         <table id="trains">
             <tr>
                 <th>
@@ -37,27 +36,43 @@ and open the template in the editor.
         </table>
         <script type="text/javascript">
             $(document).ready(function(){
+                function getQueryVariable(variable)
+                {
+                    var query = window.location.search.substring(1);
+                    var vars = query.split("&");
+                    for (var i=0;i<vars.length;i++) {
+                            var pair = vars[i].split("=");
+                            if(pair[0] === variable){return pair[1];}
+                    }
+                    return(false);
+                }
+                
                 var request = new XMLHttpRequest();
-                request.open("GET", "http://localhost:8080/WebRESTtrain/webresources/trains", false);
+                var idTrain = getQueryVariable('id');
+                request.open("GET", "http://localhost:8080/WebRESTtrain/webresources/trains/numTrain-"+idTrain, false);
                 request.send();
                 var xml = request.responseXML;
-                console.log(xml);
-                var trains = xml.getElementsByTagName("train");
-                for(var i = 0; i < trains.length; i++) {
-                    var train = trains[i];
-                    var tr ="<tr>";
-                    tr += "<td>" +train.getElementsByTagName("numTrain")[0].textContent+"</td>";
-                    tr += "<td>" +train.getElementsByTagName("villeDepart")[0].textContent+"</td>";
-                    tr += "<td>" +train.getElementsByTagName("villeArrivee")[0].textContent+"</td>";
-                    tr += "<td>" +train.getElementsByTagName("heureDepart")[0].textContent.substring(0,2);
-                    tr += " : ";
-                    tr += train.getElementsByTagName("heureDepart")[0].textContent.substring(2)+"</td>";
-                    tr += "<td><input type='number' name='nbPlaces' id='nbPlaces"+train.getElementsByTagName("numTrain")[0].textContent+"'></td>";
-                    tr +="<td><button class='bookTrain' title='Réserver le train "+train.getElementsByTagName("numTrain")[0].textContent
-                            +"' id='" +train.getElementsByTagName("numTrain")[0].textContent
-                            +"'>Réserver</button></td>";
-                    tr += "</tr>";
-                    $("#trains").append(tr);
+                if (xml !== null) {
+                    var trains = xml.getElementsByTagName("train");
+                    for(var i = 0; i < trains.length; i++) {
+                        var train = trains[i];
+                        var tr ="<tr>";
+                        tr += "<td>" +train.getElementsByTagName("numTrain")[0].textContent+"</td>";
+                        tr += "<td>" +train.getElementsByTagName("villeDepart")[0].textContent+"</td>";
+                        tr += "<td>" +train.getElementsByTagName("villeArrivee")[0].textContent+"</td>";
+                        tr += "<td>" +train.getElementsByTagName("heureDepart")[0].textContent.substring(0,2);
+                        tr += " : ";
+                        tr += train.getElementsByTagName("heureDepart")[0].textContent.substring(2)+"</td>";
+                        tr += "<td><input type='number' name='nbPlaces' id='nbPlaces"+train.getElementsByTagName("numTrain")[0].textContent+"'></td>";
+                        tr +="<td><button class='bookTrain' title='Réserver le train "+train.getElementsByTagName("numTrain")[0].textContent
+                                +"' id='" +train.getElementsByTagName("numTrain")[0].textContent
+                                +"'>Réserver</button></td>";
+                        tr += "</tr>";
+                        $("#trains").append(tr);
+                    }
+                } else {
+                    $('#trains').hide();
+                    $('body').append('Ce numéro de train n\'existe pas. Veuillez retourner à l\'accueil.')
                 }
                 
                 $("button.bookTrain").click(function(){
@@ -75,10 +90,6 @@ and open the template in the editor.
                     var data = "num="+numTrain+"&nb="+nbPlaces;
                     request.setRequestHeader("Content-length", data.length);
                     request.send(data);
-                });
-                
-                $("#idSubmit").click(function() {
-                    window.location.replace("http://localhost:8080/WebRESTtrain/train.html?id="+$("#idTrain").val());
                 });
             });
             
